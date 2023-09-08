@@ -38,15 +38,15 @@ class TypeController extends Controller
 
         $data = $request->all();
 
-        // $request->validate([
-        //     'label' => ['required', 'string', Rule::unique('types')],
-        //     'color' => 'required|exists:types,color'
-        // ], [
-        //     'label.required' => 'Questo campo è richiesto',
-        //     'label.unique' => 'Questo tipo esiste già',
-        //     'color.required' => 'Devi selezionare un colore',
-        //     'color.exists' => 'Questo colore esiste già'
-        // ]);
+        $request->validate([
+            'label' => ['required', 'string', Rule::unique('types')],
+            // 'color' => 'required|exists:types,color'
+        ], [
+            'label.required' => 'Questo campo è richiesto',
+            'label.unique' => 'Questo tipo esiste già',
+            'color.required' => 'Devi selezionare un colore',
+            'color.exists' => 'Questo colore esiste già'
+        ]);
 
         $type = new Type();
         $type->fill($data);
