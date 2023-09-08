@@ -3,7 +3,7 @@
 @section('title', 'Projects')
 
 @section('content')
-
+    {{-- @dd($technologies) --}}
     <header>
         <h1 class="text-center my-5">Lista dei tuoi progetti</h1>
     </header>
@@ -19,6 +19,7 @@
                 <th scope="col">Nome</th>
                 <th scope="col">Slug</th>
                 <th scope="col">Tipo di progetto</th>
+                <th scope="col">Technologia utilizzata</th>
                 <th scope="col">Creato il</th>
                 <th scope="col">Ultima modica</th>
                 <th></th>
@@ -30,14 +31,21 @@
                     <th scope="row">{{ $project->id }}</th>
                     <td>{{ $project->title }}</td>
                     <td>{{ $project->slug }}</td>
-                    @if ($project->type)
-                        <td>
+                    <td>
+                        @if ($project->type)
                             <span class="badge fs-6"
                                 style="background-color:{{ $project->type->color }} ">{{ $project->type->label }}</span>
-                        </td>
-                    @else
-                        -
-                    @endif
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        @forelse ($technologies as $technology)
+                            <span class="badge fs-6">{{ $technology->label }}</span>
+                        @empty
+                            None
+                        @endforelse
+                    </td>
                     <td>{{ $project->created_at }}</td>
                     <td>{{ $project->updated_at }}</td>
                     <th>
@@ -59,7 +67,11 @@
                     </th>
                 </tr>
             @empty
-                <h3 class="text-center" colspan="6">Non ci sono progetti da visualizzare</h3>
+                <tr>
+                    <td colspan="7">
+                        <h3 class="text-center">Non ci sono progetti da visualizzare</h3>
+                    </td>
+                </tr>
             @endforelse
         </tbody>
     </table>

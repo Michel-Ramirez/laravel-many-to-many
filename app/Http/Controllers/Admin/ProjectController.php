@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Project;
 use App\Http\Controllers\Controller;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -17,9 +18,12 @@ class ProjectController extends Controller
      */
     public function index()
     {
+        // $technologies = Technology::all();
         $types = Type::all();
         $projects = Project::orderBy('updated_at', 'DESC')->get();
-        return view('admin.projects.index', compact('projects', 'types'));
+        // $projects->roles()->attach($technologyId);
+
+        return view('admin.projects.index', compact('projects', 'types', 'technologies'));
     }
 
     /**
