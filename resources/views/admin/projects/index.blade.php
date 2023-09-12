@@ -3,7 +3,7 @@
 @section('title', 'Projects')
 
 @section('content')
-    {{-- @dd($technologies) --}}
+
     <header>
         <h1 class="text-center my-5">Lista dei tuoi progetti</h1>
     </header>
@@ -40,10 +40,10 @@
                         @endif
                     </td>
                     <td>
-                        @forelse ($technologies as $technology)
-                            <span class="badge fs-6">{{ $technology->label }}</span>
+                        @forelse ($project->technologies as $tech)
+                            <span class="badge rounded-pill bg-{{ $tech->color }}">{{ $tech->label }}</span>
                         @empty
-                            None
+                            -
                         @endforelse
                     </td>
                     <td>{{ $project->created_at }}</td>

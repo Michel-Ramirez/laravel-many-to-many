@@ -29,6 +29,10 @@
                          <a class="nav-link @if (request()->routeIs('admin.types.index')) active @endif"
                              href="{{ route('admin.types.index') }}">Tipi</a>
                      </li>
+                     <li class="nav-item">
+                         <a class="nav-link @if (request()->routeIs('admin.technologies.index')) active @endif"
+                             href="{{ route('admin.technologies.index') }}">Tecnologie</a>
+                     </li>
                  @endauth
              </ul>
 

@@ -90,6 +90,22 @@
             </div>
         </div>
 
+        {{-- TECHNOLOGIE --}}
+        <div class="d-flex">
+            @foreach ($technologies as $tech)
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="tech-{{ $tech->id }}"
+                        value="{{ $tech->id }}" name="techs[]" @if (in_array($tech->id, old('techs', $project_tech_ids ?? []))) checked @endif>
+                    <label class="form-check-label" for="tech-{{ $tech->id }}">{{ $tech->label }}</label>
+                </div>
+            @endforeach
+            @error('techs')
+                <div class="text-danger">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
+
         {{-- BUTTON GROUP --}}
         <div class="row mt-5">
             <div class="col d-flex justify-content-center">
@@ -102,9 +118,9 @@
     </div>
 </div>
 
-@section('scripts')
+{{-- @section('scripts')
     <script>
         const placeHolder = 'http://marcolanci.it/utils/placeholder.jpg';
         const
     </script>
-@endsection
+@endsection --}}

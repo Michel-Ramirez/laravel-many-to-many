@@ -8,6 +8,7 @@ use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -18,12 +19,11 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        // $technologies = Technology::all();
-        $types = Type::all();
-        $projects = Project::orderBy('updated_at', 'DESC')->get();
-        // $projects->roles()->attach($technologyId);
 
-        return view('admin.projects.index', compact('projects', 'types', 'technologies'));
+        $projects = Project::orderBy('updated_at', 'DESC')->get();
+
+
+        return view('admin.projects.index', compact('projects'));
     }
 
     /**
@@ -33,8 +33,11 @@ class ProjectController extends Controller
     {
         $types = Type::select('id', 'label')->get();
 
+
+        $technologies = Technology::all();
+
         $project = new Project;
-        return view('admin.projects.create', compact('project', 'types'));
+        return view('admin.projects.create', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -49,14 +52,15 @@ class ProjectController extends Controller
             'title' => ['required', 'string', Rule::unique('projects')],
             'description' => 'required|string',
             'image' => 'nullable|image',
-            'type_id' => 'nullable|exists:types,id'
-
+            'type_id' => 'nullable|exists:types,id',
+            'techs' => 'nullable|exists:technologies,id'
         ], [
             'title.required' => 'Questo campo è obbligatorio',
             'title.unique' => 'Questo progetto esiste già',
             'description.required' => 'Aggiungi una descrizione del progetto',
             'image.image' => 'Il file caricato non è valido',
-            'type_id.exists' => 'Il tipo indicato non esiste'
+            'type_id.exists' => 'Il tipo indicato non esiste',
+            'tags.exists' => 'Uno o più technologie non sono validi'
         ]);
 
         $project = new Project();
@@ -71,6 +75,11 @@ class ProjectController extends Controller
         $project->fill($data);
 
         $project->save();
+
+        //se esiste alemno uno allora effettuo l'attach
+        if (array_key_exists('techs', $data)) {
+            $project->technologies()->attach($data['techs']);
+        }
 
         return to_route('admin.projects.show', $project);
     }
@@ -92,7 +101,11 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $types = Type::select('id', 'label')->get();
-        return view('admin.projects.edit', compact('project', 'types'));
+        $technologies = Technology::select('id', 'label')->get();
+
+        $project_tech_ids = $project->technologies->pluck('id')->toArray();
+
+        return view('admin.projects.edit', compact('project', 'types', 'technologies', 'project_tech_ids'));
     }
 
     /**
@@ -105,7 +118,9 @@ class ProjectController extends Controller
             'title' => ['required', 'string', Rule::unique('projects')->ignore($project->id)],
             'description' => 'required|string',
             'image' => 'nullable|image',
-            'type_id' => 'nullable|exists:types,id'
+            'type_id' => 'nullable|exists:types,id',
+            'techs' => 'nullable|exists:technologies,id'
+
 
 
         ], [
@@ -113,12 +128,22 @@ class ProjectController extends Controller
             'title.unique' => 'Questo progetto esiste già',
             'description.required' => 'Aggiungi una descrizione del progetto',
             'image.image' => 'File caricato non valido',
-            'type_id.exists' => 'Il tipo indicato non esiste'
+            'type_id.exists' => 'Il tipo indicato non esiste',
+            'techs.exists' => 'Uno o più technologie non sono validi'
 
         ]);
 
         $data = $request->all();
         $project->update($data);
+
+
+        //se arriva vuoto, controllo se ne avevo in precendenza e li alimino
+        if (!Arr::exists($data, 'techs') && count($project->tachnologies)) $project->technologies()->detach();
+
+        // altrimenti se mi arrivano sincronizzo
+        elseif (Arr::exists($data, 'techs')) $project->technologies()->sync($data['techs']);
+
+
 
         return to_route('admin.projects.show', $project);
     }
@@ -128,6 +153,10 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+
+        if ($project->immage) Storage::delete($project->immage);
+        if (count($project->technologies)) $project->technologies()->detach();
+
         $project->forceDelete();
 
         return to_route('admin.projects.index');
