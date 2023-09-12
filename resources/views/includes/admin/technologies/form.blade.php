@@ -1,11 +1,11 @@
 <div class="d-flex justify-content-center">
     <div class="wrapper">
 
-        @if ($type->exists)
-            <form method="POST" action="{{ route('admin.types.update', $type) }}" class="card p-5">
+        @if ($technology->exists)
+            <form method="POST" action="{{ route('admin.technologies.update', $technology) }}" class="card p-5">
                 @method('PUT')
             @else
-                <form method="POST" action="{{ route('admin.types.store', $type) }}" class="card p-5">
+                <form method="POST" action="{{ route('admin.technologies.store', $technology) }}" class="card p-5">
         @endif
         @csrf
         <div class="row d-flex justify-content-between">
@@ -15,7 +15,7 @@
                 <div class="mb-3">
                     <label for="label" class="form-label">Nome del tipo</label>
                     <input type="text" class="form-control @error('label') is-invalid @enderror" id="label"
-                        name="label" value="{{ old('label', $type->label) }}"autofocus>
+                        name="label" value="{{ old('label', $technology->label) }}"autofocus>
                     @error('label')
                         <div class="text-danger">
                             {{ $message }}
@@ -25,8 +25,8 @@
             </div>
             <div class="col-4">
                 {{-- <div class="mb-3"> --}}
-                <label for="color_type" class="form-label">Scegli colore</label>
-                <input type="color" name="color" value="{{ old('color', $type->color) }}" id="color_type">
+                <label for="color_tech" class="form-label">Scegli colore</label>
+                <input type="color" name="color" value="{{ old('color', $technology->color) }}" id="color_tech">
                 {{-- </div> --}}
             </div>
             {{-- BUTTON GROUP --}}

@@ -11,5 +11,5 @@
             <i class="fas fa-arrow-left me-2"></i>Torna indietro
         </a>
     </div>
-    @include('includes.admin.types.form')
+    @include('includes.admin.technologies.form')
 @endsection
